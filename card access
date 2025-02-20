@@ -1,0 +1,47 @@
+import java.util.*;
+
+class Card {
+    String symbol;
+    String value;
+
+    public Card(String symbol, String value) {
+        this.symbol = symbol;
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value + " of " + symbol;
+    }
+}
+
+public class CardCollection {
+    public static void main(String[] args) {
+        Collection<Card> cards = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Enter number of cards: ");
+        int n = scanner.nextInt();
+        scanner.nextLine(); 
+        
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter symbol (e.g., Hearts, Spades): ");
+            String symbol = scanner.nextLine();
+            System.out.print("Enter value (e.g., Ace, 2, King): ");
+            String value = scanner.nextLine();
+            cards.add(new Card(symbol, value));
+        }
+        
+        System.out.print("Enter symbol to search: ");
+        String searchSymbol = scanner.nextLine();
+        
+        System.out.println("Cards with symbol " + searchSymbol + ":");
+        for (Card card : cards) {
+            if (card.symbol.equalsIgnoreCase(searchSymbol)) {
+                System.out.println(card);
+            }
+        }
+        
+        scanner.close();
+    }
+}
