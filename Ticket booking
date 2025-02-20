@@ -1,0 +1,64 @@
+import java.util.*;
+
+class TicketBookingSystem {
+    private final Set<Integer> bookedSeats = new HashSet<>();
+    private final int totalSeats;
+    
+    public TicketBookingSystem(int totalSeats) {
+        this.totalSeats = totalSeats;
+    }
+    
+    public synchronized boolean bookSeat(int seatNumber, String user) {
+        if (bookedSeats.contains(seatNumber)) {
+            System.out.println(user + " tried to book Seat " + seatNumber + " but it is already booked.");
+            return false;
+        }
+        bookedSeats.add(seatNumber);
+        System.out.println(user + " successfully booked Seat " + seatNumber);
+        return true;
+    }
+}
+
+class BookingThread extends Thread {
+    private final TicketBookingSystem system;
+    private final int seatNumber;
+    private final String user;
+    
+    public BookingThread(TicketBookingSystem system, int seatNumber, String user, int priority) {
+        this.system = system;
+        this.seatNumber = seatNumber;
+        this.user = user;
+        setPriority(priority);
+    }
+    
+    @Override
+    public void run() {
+        system.bookSeat(seatNumber, user);
+    }
+}
+
+public class TicketBooking {
+    public static void main(String[] args) {
+        TicketBookingSystem system = new TicketBookingSystem(10);
+        List<Thread> threads = new ArrayList<>();
+        
+        // Creating VIP and normal users
+        threads.add(new BookingThread(system, 3, "VIP User 1", Thread.MAX_PRIORITY));
+        threads.add(new BookingThread(system, 3, "Normal User 1", Thread.NORM_PRIORITY));
+        threads.add(new BookingThread(system, 5, "VIP User 2", Thread.MAX_PRIORITY));
+        threads.add(new BookingThread(system, 5, "Normal User 2", Thread.NORM_PRIORITY));
+        threads.add(new BookingThread(system, 2, "Normal User 3", Thread.NORM_PRIORITY));
+        
+        for (Thread t : threads) {
+            t.start();
+        }
+        
+        for (Thread t : threads) {
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
